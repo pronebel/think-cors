@@ -25,7 +25,12 @@
     "eslint": "1.8.0",
     "istanbul": "0.4.0",
     "mocha": "1.20.1",
-    "thinkjs": "2.x.x"
+    "thinkjs": "2.x.x",
+    "basic-auth-connect": "^1.0.0",
+    "body-parser": "^1.12.4",
+    "express": "^4.12.4",
+    "should": "^6.0.3",
+    "supertest": "^1.0.1"
   },
   "author": "",
   "license": "ISC",

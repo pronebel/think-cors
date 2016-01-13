@@ -221,13 +221,14 @@ export default class extends think.middleware.base {
      */
     run() {
 
-        console.log("d~~~~~~~~~~~~~~~d");
+        //console.log("d~~~~~~~~~~~~~~~d");
 
         let req = this.http.req;
         let res = this.http.res;
 
 
         var options = this.config('cors');
+        console.log(options);
         options = this.configureOptions(options);
 
 
@@ -249,14 +250,18 @@ export default class extends think.middleware.base {
 
             console.log(headers);
             if (options.preflightContinue ) {
+                //console.log("~~~~~options_going");
                 return;
             } else {
 
+                //console.log("~~~~~options_break");
+
                 res.statusCode = 204;
                 res.end();
-                return think.prevent();
+                return;
             }
         } else {
+            //console.log("~~~~~acting_going");
             //实际的请求
             // actual response
             headers.push(this.configureOrigin(options, req));

@@ -9,14 +9,18 @@ instance.load();
 
 var Middleware = require('../lib/index.js');
 
-var getHttp = function(options){
+/**
+ * 模拟请求(可以配置各种属性)
+ */
+var getHttp = function(options,method){
     var req = new http.IncomingMessage();
     req.headers = {
+
         'host': 'www.thinkjs.org',
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit',
     };
-    req.method = 'GET';
+    req.method = method.toUpperCase() || "GET";
     req.httpVersion = '1.1';
     req.url = '/index/index';
     var res = new http.ServerResponse(req);
@@ -34,21 +38,35 @@ var getHttp = function(options){
     })
 }
 
-var execMiddleware = function(options){
-    return getHttp(options).then(function(http){
+/**
+ * 执行中间件
+ * @param options
+ * @param method
+ * @returns {*}
+ */
+var execMiddleware = function(options,method){
+    return getHttp(options,method).then(function(http){
         var instance = new Middleware(http);
         return instance.run();
     })
 }
 
 describe('cors', function(){
-    it('empty cors', function(done){
-        execMiddleware().then(function(data){
+    //
+    it('empty options', function(done){
+        execMiddleware({_config: {
+            cors:{
+                origin: 'http://baidu.com',
+                methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+                preflightContinue: false
+            }
+        }},"OPTIONS").then(function(data){
+            //console.log(data);
             assert.equal(data, undefined);
             done();
         })
     })
-    it('array, not match', function(done){
+    /*it('array, not match', function(done){
         execMiddleware({_config: {
             ip_filter: ['10.0.0.1']
         }}).then(function(data){
@@ -188,5 +206,5 @@ describe('cors', function(){
             assert.equal(data, undefined)
             done();
         })
-    })
+    })*/
 })
