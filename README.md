@@ -61,7 +61,8 @@ methods:
     OPTIONS请求方法的主要用途有两个：
     
     1、获取服务器支持的HTTP请求方法；
-    2、用来检查服务器的性能。例如：AJAX进行跨域请求时的预检，需要向另外一个域名的资源发送一个HTTP OPTIONS请求头，用以判断实际发送的请求是否安全。
+    2、用来检查服务器的性能。例如：AJAX进行跨域请求时的预检，
+    需要向另外一个域名的资源发送一个HTTP OPTIONS请求头，用以判断实际发送的请求是否安全。
     
     
     在ajax进行跨域请求时就会自动先发出OPTIONS请求进行预捡,如果不对OPTIONS请求进行处理,
@@ -111,6 +112,7 @@ Access-Control-Expose-Headers
     3- 字符串数组,如:["x-token","x-uid"]
 
 Access-Control-Max-Age
+
     1- 不设置
     2- 设置为秒数
 
@@ -121,14 +123,7 @@ Access-Control-Max-Age
     
     
     
-    
-### 测试用例
 
-1- cors不进行配置
-2- cors设置为对象:
-    
-    - origin值类型
-    - method类型
     
 
     
@@ -142,3 +137,12 @@ Access-Control-Max-Age
     Access-Control-Allow-Methods: 允许使用的请求方法，以逗号隔开
     Access-Control-Allow-Headers: 允许自定义的头部，以逗号隔开，大小写不敏感
 
+
+    
+### 测试用例
+
+1- cors不进行配置
+2- cors设置为对象:
+    
+    - origin值类型
+    - method类型
