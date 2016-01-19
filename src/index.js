@@ -25,18 +25,20 @@ export default class extends think.middleware.base {
      */
     isOriginAllowed(origin, allowedOrigin) {
         if (Array.isArray(allowedOrigin)) {
-            allowedOrigin.forEach((originItem)=>{
-                if (this.isOriginAllowed(origin, originItem)) {
-                    return true;
-                }
-            })
 
-            return false;
-        } else if (this.isString(allowedOrigin)) {
-            return origin === allowedOrigin;
-        } else if (allowedOrigin instanceof RegExp) {
-            return allowedOrigin.test(origin);
-        } else {
+            for(let i=0;i<allowedOrigin.length;i++){
+
+                let originItem = allowedOrigin[i];
+
+                if (this.isString(originItem)) {
+                    return origin === originItem;
+                } else if (originItem instanceof RegExp) {
+                    return originItem.test(origin);
+                }
+            }
+
+
+        }else {//true/false的情况
             return !!allowedOrigin;
         }
     }
@@ -52,7 +54,7 @@ export default class extends think.middleware.base {
             headers = [],
             isAllowed;
 
-        if (!options.origin || options.origin === '*') {
+        if (options.origin === '*') {
             // allow any origin
             headers.push([{
                 key: 'Access-Control-Allow-Origin',
@@ -92,9 +94,9 @@ export default class extends think.middleware.base {
      * @returns {{key: string, value: (Array|string)}}
      */
     configureMethods(options) {
-        var methods = options.methods || defaults.methods;
+        var methods = options.methods;
         if (methods.join) {
-            methods = options.methods.join(','); // .methods is an array, so turn it into a string
+            methods = options.methods.join(',');
         }
         return {
             key: 'Access-Control-Allow-Methods',
@@ -124,7 +126,7 @@ export default class extends think.middleware.base {
      * @returns {*}
      */
     configureAllowedHeaders(options, req) {
-        var headers = options.allowedHeaders || options.headers;
+        var headers = options.allowedHeaders;
         if (!headers) {
             headers = req.headers['access-control-request-headers']; // .headers wasn't specified, so reflect the request headers
         } else if (headers.join) {
@@ -200,19 +202,6 @@ export default class extends think.middleware.base {
 
 
 
-    configureOptions(opts){
-
-        // if no options were passed in, use the defaults
-        if (!opts || opts === true) {
-            opts = {};
-        }
-
-        opts.origin = opts.origin || defaults.origin;
-        opts.methods = opts.methods || defaults.methods;
-        opts.preflightContinue =  opts.preflightContinue  || defaults.preflightContinue;
-
-        return opts;
-    }
 
 
     /**
@@ -221,52 +210,36 @@ export default class extends think.middleware.base {
      */
     run() {
 
-        //console.log("d~~~~~~~~~~~~~~~d");
 
-        let req = this.http.req;
-        let res = this.http.res;
+        let [req,res,cofingCors] = [this.http.req, this.http.res,(this.config('cors') || {})];
+        let  method = req.method && req.method.toUpperCase && req.method.toUpperCase();
+
+        var options =  Object.assign({},defaults,cofingCors);
+
+        var headers = [
+            this.configureOrigin(options, req),
+            this.configureCredentials(options, req),
+            this.configureExposedHeaders(options, req)
+
+        ];
 
 
-        var options = this.config('cors');
-        console.log(options);
-        options = this.configureOptions(options);
-
-
-
-        var headers = [],
-            method = req.method && req.method.toUpperCase && req.method.toUpperCase();
-
-        console.log(method);
-        //OPTIONS请求
         if (method === 'OPTIONS') {
-            // preflight
-            headers.push(this.configureOrigin(options, req));
-            headers.push(this.configureCredentials(options, req));
+
             headers.push(this.configureMethods(options, req));
             headers.push(this.configureAllowedHeaders(options, req));
             headers.push(this.configureMaxAge(options, req));
-            headers.push(this.configureExposedHeaders(options, req));
+
             this.applyHeaders(headers, res);
 
-            console.log(headers);
             if (options.preflightContinue ) {
-                //console.log("~~~~~options_going");
                 return;
             } else {
-
-                //console.log("~~~~~options_break");
-
                 res.statusCode = 204;
                 res.end();
                 return;
             }
         } else {
-            //console.log("~~~~~acting_going");
-            //实际的请求
-            // actual response
-            headers.push(this.configureOrigin(options, req));
-            headers.push(this.configureCredentials(options, req));
-            headers.push(this.configureExposedHeaders(options, req));
             this.applyHeaders(headers, res);
             return;
         }

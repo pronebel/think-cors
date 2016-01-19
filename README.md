@@ -1,9 +1,17 @@
 ### think-cors
 
-    从express的cors插件中提取出来的thinkjs的cors插件
+    从express-cors插件中提取出来的thinkjs的cors插件,
+    并对其部分逻辑进行了优化处理
     
     
-### 对express的cors插件解析及对cors相关理解的说明
+    
+    
+### cors插件解析及对cors相关理解的说明
+
+
+config中的cors,可以默认不设置(会取值为默认值),或按如下方式设置为对象
+
+----------
     
 cors的默认参数
     
@@ -14,7 +22,40 @@ cors的默认参数
     };
     
     
- methods: 
+cors的全量设置:
+    
+    {
+        origin:"*",
+        methods:["GET","POST"]   
+        credentials:true,
+        allowedHeaders:["x-token","x-uid"],
+        exposedHeaders:["xx","yy"],
+        maxAge:1000,
+        preflightContinue:true
+    }
+    
+    
+origin:
+    
+    在config中配置cors,取值范围归类为简单和复杂两种方式
+    
+    简单:
+    - 不设置(取默认值)
+    - 设置为字符:"*",
+    - 设置为具体的url地址
+    - true/false
+    
+    复杂:数据对象,元素为字符,正则,(function暂不加,后继有复杂设置不能满足的场景,再进行增加)
+    比如:
+    
+    origin:[
+        "http://abc.com",
+        new RegExp()
+    ]
+    
+    
+    
+methods: 
     该参数的定义使用过RESTFUL接口规范的同学应该都熟悉,这里需要提一下OPTIONS方法.
     
     OPTIONS请求方法的主要用途有两个：
@@ -35,14 +76,69 @@ cors的默认参数
     这样重复的OPTIONS请求会从缓存中提取,提高请求性能.
     
     
+### cors的执行过程
     
+congif中的cors的设置,主要以下几种:
+
+Access-Control-Allow-Origin
+
     
+    1- 不设置,取默认值为 "*" 
+    2- 为特定的url
+    3- 为数组
+    
+Access-Control-Allow-Methods
+
+    1- 不设置,取默认值
+    2- 字符串,如: method:"GET,POST"
+    3- 字符数组,如:method:["GET","POST"]
+
+Access-Control-Allow-Credentials
+    
+    1- 不设置,取默认值
+    2- 设置为 true/false
+
+Access-Control-Allow-Headers
+
+    1- 不设置,取request的access-control-request-headers值
+    2- 字符串,如:"x-token,x-uid"
+    3- 字符数组,如:["x-token","x-uid"]
+
+Access-Control-Expose-Headers
+
+    1- 不设置
+    2- 字符串,如:"x-token,x-uid"
+    3- 字符串数组,如:["x-token","x-uid"]
+
+Access-Control-Max-Age
+    1- 不设置
+    2- 设置为秒数
+
+
+
+
     
     
     
     
     
 ### 测试用例
+
+1- cors不进行配置
+2- cors设置为对象:
     
+    - origin值类型
+    - method类型
     
+
     
+### 请求头说明(来源于网络) [跨域资源共享CORS安全性浅析](http://netsecurity.51cto.com/art/201311/419179.htm)
+                    
+   
+    Access-Control-Allow-Origin: 允许跨域访问的域，可以是一个域的列表，也可以是通配符"*"。这里要注意Origin规则只对域名有效，并不会对子目录有效。即http://foo.example/subdir/ 是无效的。但是不同子域名需要分开设置，这里的规则可以参照同源策略
+    Access-Control-Allow-Credentials: 是否允许请求带有验证信息，这部分将会在下面详细解释
+    Access-Control-Expose-Headers: 允许脚本访问的返回头，请求成功后，脚本可以在XMLHttpRequest中访问这些头的信息(貌似webkit没有实现这个)
+    Access-Control-Max-Age: 缓存此次请求的秒数。在这个时间范围内，所有同类型的请求都将不再发送预检请求而是直接使用此次返回的头作为判断依据，非常有用，大幅优化请求次数
+    Access-Control-Allow-Methods: 允许使用的请求方法，以逗号隔开
+    Access-Control-Allow-Headers: 允许自定义的头部，以逗号隔开，大小写不敏感
+
