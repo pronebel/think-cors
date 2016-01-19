@@ -1,7 +1,7 @@
 var assert = require('assert');
-var path = require('path');
 var fs = require('fs');
 var http = require('http');
+
 
 var thinkjs = require('thinkjs');
 var instance = new thinkjs();
@@ -29,6 +29,8 @@ var getHttp = function(options,method){
     }
 
     return think.http(req, res).then(function(http){
+
+
         if(options){
             for(var key in options){
                 http[key] = options[key];
@@ -46,24 +48,49 @@ var getHttp = function(options,method){
  */
 var execMiddleware = function(options,method){
     return getHttp(options,method).then(function(http){
+
         var instance = new Middleware(http);
-        return instance.run();
+        instance.run();
+        return http.res;
     })
 }
 
+
+ var assertRes = function(resHeader,target){
+
+     for(var key in target){
+         console.log(resHeader[key]);
+         if(!_.isEqual(target[key],resHeader[key])){
+             return false
+         }
+     }
+
+
+     return true;
+ }
+
+
 describe('cors', function(){
     //
-    it('empty options', function(done){
-        execMiddleware({_config: {
-            cors:{
-                origin: 'http://baidu.com',
-                methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-                preflightContinue: false
-            }
-        }},"OPTIONS").then(function(data){
-            //console.log(data);
-            assert.equal(data, undefined);
+
+
+
+    it('cors不设置', function(done){
+        execMiddleware({_config: {}},"OPTIONS").then(function(data){
+
+            console.log(data);
+
+           // 'access-control-allow-methods': ''
+
+            var origin = data["_headers"]['access-control-allow-origin'];
+            var methods = data["_headers"]['access-control-allow-methods'];
+
+
+            assert.equal(origin,'*');
+            assert.equal(methods,'GET,HEAD,PUT,PATCH,POST2,DELETE');
             done();
+        }).catch(function(e) {
+            done(e);
         })
     })
     /*it('array, not match', function(done){

@@ -1,7 +1,7 @@
 ### think-cors
 
-    从express-cors插件中提取出来的thinkjs的cors插件,
-    并对其部分逻辑进行了优化处理
+    参考express-cors插件中提取出来的thinkjs的cors插件,
+    并对其部分逻辑进行了规整优化处理,并补充了整体配置说明的说明,以前只能看代码
     
     
     
