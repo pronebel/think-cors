@@ -1,8 +1,6 @@
 var assert = require('assert');
 var fs = require('fs');
 var http = require('http');
-
-
 var thinkjs = require('thinkjs');
 var instance = new thinkjs();
 instance.load();
@@ -15,7 +13,7 @@ var Middleware = require('../lib/index.js');
 var getHttp = function(options,method){
     var req = new http.IncomingMessage();
     req.headers = {
-
+        'origin':"http://www.thinkjs.org",
         'host': 'www.thinkjs.org',
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit',
@@ -56,18 +54,19 @@ var execMiddleware = function(options,method){
 }
 
 
- var assertRes = function(resHeader,target){
+var execMiddleware2 = function(options,method){
+    return getHttp(options,method).then(function(http){
 
-     for(var key in target){
-         console.log(resHeader[key]);
-         if(!_.isEqual(target[key],resHeader[key])){
-             return false
-         }
-     }
+        var instance = new Middleware(http);
+        instance.run();
+        http.res.statusCode = 200;
+        http.res.end();
+        return http.res;
+    })
+}
 
 
-     return true;
- }
+
 
 
 describe('cors', function(){
@@ -75,163 +74,100 @@ describe('cors', function(){
 
 
 
-    it('cors不设置', function(done){
+    it('empty,default config', function(done){
         execMiddleware({_config: {}},"OPTIONS").then(function(data){
 
-            console.log(data);
-
-           // 'access-control-allow-methods': ''
 
             var origin = data["_headers"]['access-control-allow-origin'];
             var methods = data["_headers"]['access-control-allow-methods'];
+            var status = data["statusCode"];
+            try {
+                assert.equal(origin,'*');
+                assert.equal(methods,'GET,HEAD,PUT,PATCH,POST,DELETE');
+                assert.equal(status,204);
+                done();
+            } catch (x) {
+                done(x);
+            }
 
 
-            assert.equal(origin,'*');
-            assert.equal(methods,'GET,HEAD,PUT,PATCH,POST2,DELETE');
-            done();
-        }).catch(function(e) {
-            done(e);
         })
     })
-    /*it('array, not match', function(done){
-        execMiddleware({_config: {
-            ip_filter: ['10.0.0.1']
-        }}).then(function(data){
-            assert.equal(data, undefined);
-            done();
-        })
-    })
-    it('array, not match, with *', function(done){
-        execMiddleware({_config: {
-            ip_filter: ['10.*.*.1']
-        }}).then(function(data){
-            assert.equal(data, undefined);
-            done();
-        })
-    })
-    it('array, match', function(done){
-        var statusAction = think.statusAction;
-        think.statusAction = function(status, http){
-            assert.equal(status, 403);
-            return Promise.reject(new Error());
-        }
-        execMiddleware({_config: {
-            ip_filter: ['10.0.0.1']
-        }, ip: function(){
-            return '10.0.0.1'
-        }}).catch(function(err){
-            think.statusAction = statusAction;
-            done();
-        })
-    })
-    it('array, match, with *', function(done){
-        var statusAction = think.statusAction;
-        think.statusAction = function(status, http){
-            assert.equal(status, 403);
-            return Promise.reject(new Error());
-        }
-        execMiddleware({_config: {
-            ip_filter: ['10.*']
-        }, ip: function(){
-            return '10.0.0.1'
-        }}).catch(function(err){
-            think.statusAction = statusAction;
-            done();
-        })
-    })
-    it('array, match, regexp', function(done){
-        var statusAction = think.statusAction;
-        think.statusAction = function(status, http){
-            assert.equal(status, 403);
-            return Promise.reject(new Error());
-        }
-        execMiddleware({_config: {
-            ip_filter: [/^10/]
-        }, ip: function(){
-            return '10.0.0.1'
-        }}).catch(function(err){
-            think.statusAction = statusAction;
-            done();
-        })
-    })
-    it('array, match, blackList regexp', function(done){
-        var statusAction = think.statusAction;
-        think.statusAction = function(status, http){
-            assert.equal(status, 403);
-            return Promise.reject(new Error());
-        }
-        execMiddleware({_config: {
-            ip_filter: {blackList: /^10/}
-        }, ip: function(){
-            return '10.0.0.1'
-        }}).catch(function(err){
-            think.statusAction = statusAction;
-            done();
-        })
-    })
-    it('array, match, whiteList regexp', function(done){
-        execMiddleware({_config: {
-            ip_filter: {whiteList: /^10/}
-        }, ip: function(){
-            return '10.0.0.1'
-        }}).then(function(data){
-            assert.equal(data, undefined)
-            done();
-        })
-    })
-    it('array, match, whiteList regexp, blackList', function(done){
-        execMiddleware({_config: {
-            ip_filter: {whiteList: /^10/, blackList: /^10/}
-        }, ip: function(){
-            return '10.0.0.1'
-        }}).then(function(data){
-            assert.equal(data, undefined)
-            done();
-        })
-    })
-    it('array, no whiteList & blackList rules', function(done){
-        execMiddleware({_config: {
-            ip_filter: {xxx: /^10/}
-        }, ip: function(){
-            return '10.0.0.1'
-        }}).then(function(data){
-            assert.equal(data, undefined)
-            done();
-        })
-    })
-    it('array, not match, whiteList regexp', function(done){
-        var statusAction = think.statusAction;
-        think.statusAction = function(status, http){
-            assert.equal(status, 403);
-            return Promise.reject(new Error());
-        }
-        execMiddleware({_config: {
-            ip_filter: {whiteList: /^10/}
-        }, ip: function(){
-            return '110.0.0.1'
-        }}).catch(function(err){
-            think.statusAction = statusAction;
-            done();
-        })
-    })
-    it('function, return empty', function(done){
-        execMiddleware({
-            _config: {
-                ip_filter: function(){return }
+
+    it('set origin=true', function(done){
+
+        var data =  {
+            cors:{
+                origin:true
             }
-        }).then(function(data){
-            assert.equal(data, undefined)
-            done();
+        }
+
+        execMiddleware2({_config:data},"GET").then(function(data){
+
+            var origin = data["_headers"]['access-control-allow-origin'];
+
+            try {
+                assert.equal(origin,'http://www.thinkjs.org');
+                done();
+            } catch (x) {
+                done(x);
+            }
         })
     })
-    it('function, return empty array', function(done){
-        execMiddleware({
-            _config: {
-                ip_filter: function(){return []}
+
+    it('set origin=string array', function(done){
+
+        var data =  {
+            cors:{
+                origin:["http://www.baidu.com",'http://www.thinkjs.org']
             }
-        }).then(function(data){
-            assert.equal(data, undefined)
-            done();
+        }
+
+        execMiddleware2({_config:data},"OPTIONS").then(function(data){
+
+
+
+            try {
+                var origin ;
+                if(data["_headers"]){
+                    origin = data["_headers"]['access-control-allow-origin'];
+                }
+
+                assert.equal(origin,'http://www.thinkjs.org');
+                done();
+            } catch (x) {
+                done(x);
+            }
         })
-    })*/
+    })
+
+    it('set origin=regex array', function(done){
+
+        var thinkjsReg = /^http\:\/\/\D{1,}.thinkjs.org/gi;
+        var data =  {
+            cors:{
+                origin:["http://www.baidu.com",thinkjsReg]
+            }
+        }
+
+        execMiddleware2({_config:data},"OPTIONS").then(function(data){
+
+
+
+            try {
+                var origin ;
+                if(data["_headers"]){
+                    origin = data["_headers"]['access-control-allow-origin'];
+                }
+
+                assert.equal(origin,'http://www.thinkjs.org');
+                done();
+            } catch (x) {
+                done(x);
+            }
+        })
+    })
+
+
+
 })

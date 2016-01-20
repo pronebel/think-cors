@@ -26,16 +26,19 @@ export default class extends think.middleware.base {
     isOriginAllowed(origin, allowedOrigin) {
         if (Array.isArray(allowedOrigin)) {
 
+
             for(let i=0;i<allowedOrigin.length;i++){
 
                 let originItem = allowedOrigin[i];
 
-                if (this.isString(originItem)) {
-                    return origin === originItem;
-                } else if (originItem instanceof RegExp) {
-                    return originItem.test(origin);
+                if (this.isString(originItem)&&(origin === originItem)) {
+                    return true;
+                } else if (originItem instanceof RegExp  &&(originItem.test(origin))) {
+                    return true;
                 }
             }
+
+            return false;
 
 
         }else {//true/false的情况
@@ -50,6 +53,7 @@ export default class extends think.middleware.base {
      * @returns {Array}
      */
     configureOrigin(options, req) {
+
         var requestOrigin = req.headers.origin,
             headers = [],
             isAllowed;
@@ -72,6 +76,8 @@ export default class extends think.middleware.base {
             }]);
         } else {
             isAllowed = this.isOriginAllowed(requestOrigin, options.origin);
+
+            //console.log(requestOrigin);
             // reflect origin
             headers.push([{
                 key: 'Access-Control-Allow-Origin',
@@ -185,17 +191,21 @@ export default class extends think.middleware.base {
      */
     applyHeaders(headers, res) {
 
-        headers.forEach(header=>{
+
+        for (var i = 0, n = headers.length; i < n; i++) {
+            var header = headers[i];
             if (header) {
                 if (Array.isArray(header)) {
                     this.applyHeaders(header, res);
                 } else if (header.key === 'Vary' && header.value) {
+                    //console.log(header);
                     vary(res, header.value);
                 } else if (header.value) {
+                    //console.log(header);
                     res.setHeader(header.key, header.value);
                 }
             }
-        })
+        }
 
 
     }
@@ -216,12 +226,20 @@ export default class extends think.middleware.base {
 
         var options =  Object.assign({},defaults,cofingCors);
 
+
+        //console.log(JSON.stringify(options));
+
+
         var headers = [
             this.configureOrigin(options, req),
             this.configureCredentials(options, req),
             this.configureExposedHeaders(options, req)
 
         ];
+
+
+        //console.log("header");
+        //console.log(JSON.stringify(headers));
 
 
         if (method === 'OPTIONS') {
