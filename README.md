@@ -61,11 +61,10 @@ cors的全量设置:
 复杂:采取匹配的方式的设置
     
     数据对象,元素为字符,正则,(function暂不加,后继有复杂设置不能满足的场景,再进行增加),比如:
-     
-    var thinkjsReg = /^http\:\/\/\D{1,}.thinkjs.org/gi;
-    var origin:[
+
+    origin:[
         "http://abc.com",
-       thinkjsReg
+      /^http\:\/\/(.+\.)?thinkjs.org$/
     ]
         
         
@@ -74,7 +73,7 @@ cors的全量设置:
         
         
     
-####methods (用于options预检请求)
+####methods 
    
     1- 不设置,取默认值
     2- 字符串,如: method:"GET,POST"
@@ -87,7 +86,7 @@ cors的全量设置:
     2- 设置为 true/false
 
 
-####allowedHeaders  (用于options预检请求)
+####allowedHeaders  
     1- 不设置,取request的access-control-request-headers值
     2- 字符串,如:"x-token,x-uid"
 

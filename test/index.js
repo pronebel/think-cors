@@ -167,7 +167,7 @@ describe('cors', function(){
 
     it('origin=regex array', function(done){
 
-        var thinkjsReg = /^http\:\/\/\D{1,}.thinkjs.org/gi;
+        var thinkjsReg = /^http\:\/\/(.+\.)?thinkjs.org$/;//   /^http\:\/\/\D{1,}.thinkjs.org/gi;
         var data =  {
             cors:{
                 origin:["http://www.baidu.com",thinkjsReg]
