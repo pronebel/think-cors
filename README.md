@@ -9,7 +9,7 @@
 ### cors插件解析及对cors相关理解的说明
 
 
-config中的cors,可以默认不设置(会取值为默认值),或按如下方式设置为对象
+可以默认不设置(会取值为默认值),或 设置为如下的全量设置
 
 ----------
     
@@ -26,69 +26,85 @@ cors的全量设置:
     
     {
         origin:"*",  //Access-Control-Allow-Origin
-        methods:"GET,POST",   //Access-Control-Allow-Methods
+        methods:"GET,POST",   //Access-Control-Allow-Methods 
         credentials:true,//Access-Control-Allow-Credentials
         allowedHeaders:"x-token,x-uid",//Access-Control-Allow-Headers
         exposedHeaders:"xx,yy",//Access-Control-Expose-Headers
-        maxAge:1000,//Access-Control-Max-Age//用于设置options请求的缓存
-        preflightContinue:true  //用于options请求
+        maxAge:1000,//Access-Control-Max-Age
+        preflightContinue:true  
     }
  
 
 
-  origin  
-    1- 不设置,取默认值为 "*" 
-    2- 为特定的url
-    3- 为数组
-    
-methods
+####origin  
 
+    1- 不设置,取默认值为 "*" 
+    2- 为特定的字符url
+    3- true/false
+    4- 为数组
+    
+    
+分为简单和复杂两种
+        
+简单:
+
+    - 不设置(取默认值)
+    - 设置为具体字符:"*" 或 具体的url地址
+    - true/false  
+      true标示任何请求都允许,由于*的设置与credentials为true时的不能同时设置,如果设置为true会填充为请求头Request中的origin
+      false 标示不允许任何
+        
+复杂:
+    
+    数据对象,元素为字符,正则,(function暂不加,后继有复杂设置不能满足的场景,再进行增加),比如:
+    origin:[
+        "http://abc.com",
+        new RegExp()
+    ]
+        
+        
+        
+        
+        
+        
+    
+####methods
+   
     1- 不设置,取默认值
     2- 字符串,如: method:"GET,POST"
+    
+    用于options请求
 
-credentials
+####credentials
     
     1- 不设置,取默认值
     2- 设置为 true/false
 
 
-allowedHeaders
+####allowedHeaders
     1- 不设置,取request的access-control-request-headers值
     2- 字符串,如:"x-token,x-uid"
 
 
-exposedHeaders
+####exposedHeaders
     1- 不设置
     2- 字符串,如:"x-token,x-uid"
 
 
-maxAge
+####maxAge
+
     1- 不设置
     2- 设置为秒数   
+     用于options请求
+
     
-origin:
-    
-    在config中配置cors,取值范围归类为简单和复杂两种方式
-    
-    简单:
-    - 不设置(取默认值)
-    - 设置为字符:"*",
-    - 设置为具体的url地址
-    - true/false
-    
-    复杂:数据对象,元素为字符,正则,(function暂不加,后继有复杂设置不能满足的场景,再进行增加)
-    比如:
-    
-    origin:[
-        "http://abc.com",
-        new RegExp()
-    ]
+### 测试用例
+
+    根据每个值的设置方式进行测试
     
     
-    
-methods: 
-    该参数的定义使用过RESTFUL接口规范的同学应该都熟悉,这里需要提一下OPTIONS方法.
-    
+#### 关于OPTIONS请求
+
     OPTIONS请求方法的主要用途有两个：
     
     1、获取服务器支持的HTTP请求方法；
@@ -101,22 +117,12 @@ methods:
     如果不对OPTIONS做返回的处理,服务器会对该请求返回一些内容,会出发请求回调,后继继续发送POST,GET请求.
     
     express的cors插件通过preflightContinue对OPTIONS划分了两种处理方式(在支持cors跨域时):
-    当参数为true:会继续提交给接口进行接口层面的返回,
-    当参数为false:直接返回HTTP Stauts 204.
+    当参数为true:会继续提交给接口进行接口层面的返回, 当参数为false:直接返回HTTP Stauts 204.
     
     OPTIONS在预检cors权限时,每次都会发送,而且每次的处理作用都是一样的,所以可以对OPTIONS的请求在第一次访问后进行缓存,
     这样重复的OPTIONS请求会从缓存中提取,提高请求性能.
     
     
-
-
-
-
-    
-    
-    
-    
-
     
 
     
@@ -132,10 +138,3 @@ methods:
 
 
     
-### 测试用例
-
-1- cors不进行配置
-2- cors设置为对象:
-    
-    - origin值类型
-    - method类型
