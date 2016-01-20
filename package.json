@@ -1,7 +1,15 @@
 {
+
+
   "name": "think-cors",
+  "description": "thinkjs cors",
   "version": "1.0.0",
-  "description": "",
+  "author": {
+    "name": "nebel",
+    "email": "nebel@outlook.com"
+  },
+
+
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha --reporter spec --timeout 5000 --recursive test/",
@@ -31,9 +39,7 @@
   },
 
 
-
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/pronebel/think-cors/issues"
   },
