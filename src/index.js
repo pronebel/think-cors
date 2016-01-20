@@ -7,9 +7,7 @@ var defaults = {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false
 };
-/**
- * middleware
- */
+
 export default class extends think.middleware.base {
 
 
@@ -17,12 +15,6 @@ export default class extends think.middleware.base {
         return typeof s === 'string' || s instanceof String;
     }
 
-    /**
-     * 检查给出的origin是否在允许
-     * @param origin
-     * @param allowedOrigin
-     * @returns {boolean}
-     */
     isOriginAllowed(origin, allowedOrigin) {
         if (Array.isArray(allowedOrigin)) {
 
@@ -41,17 +33,12 @@ export default class extends think.middleware.base {
             return false;
 
 
-        }else {//true/false的情况
+        }else {
             return !!allowedOrigin;
         }
     }
 
-    /**
-     * 根据req的请求,返回Access-Control-Allow-Origin的配置
-     * @param options
-     * @param req
-     * @returns {Array}
-     */
+
     setOrigin(options, req) {
 
         var requestOrigin = req.headers.origin,
@@ -59,13 +46,13 @@ export default class extends think.middleware.base {
             isAllowed;
 
         if (options.origin === '*') {
-            // allow any origin
+
             headers.push([{
                 key: 'Access-Control-Allow-Origin',
                 value: '*'
             }]);
         } else if (this.isString(options.origin)) {
-            // fixed origin
+
             headers.push([{
                 key: 'Access-Control-Allow-Origin',
                 value: options.origin
@@ -74,11 +61,10 @@ export default class extends think.middleware.base {
                 key: 'Vary',
                 value: 'Origin'
             }]);
+
         } else {
             isAllowed = this.isOriginAllowed(requestOrigin, options.origin);
 
-            //console.log(requestOrigin);
-            // reflect origin
             headers.push([{
                 key: 'Access-Control-Allow-Origin',
                 value: isAllowed ? requestOrigin : false
@@ -94,11 +80,7 @@ export default class extends think.middleware.base {
         return headers;
     }
 
-    /**
-     * 根据config配置Access-Control-Allow-Methods
-     * @param options
-     * @returns {{key: string, value: (Array|string)}}
-     */
+
     setMethods(options) {
         var methods = options.methods;
 
@@ -113,11 +95,7 @@ export default class extends think.middleware.base {
 
     }
 
-    /**
-     * 配置Access-Control-Allow-Credentials
-     * @param options
-     * @returns {*}
-     */
+
     setCredentials(options) {
         if (options.credentials === true) {
             return {
@@ -130,16 +108,11 @@ export default class extends think.middleware.base {
 
     }
 
-    /**
-     * 配置 access-control-request-headers
-     * @param options
-     * @param req
-     * @returns {*}
-     */
-    setAllowedHeaders(options, req) {
+
+    setAllowed(options, req) {
         var headers = options.allowedHeaders;
         if (!headers) {
-            headers = req.headers['access-control-request-headers']; // .headers wasn't specified, so reflect the request headers
+            headers = req.headers['access-control-request-headers'];
         }
         if (headers && headers.length) {
             return {
@@ -152,12 +125,8 @@ export default class extends think.middleware.base {
 
     }
 
-    /**
-     * 配置 Access-Control-Expose-Headers
-     * @param options
-     * @returns {*}
-     */
-    setExposedHeaders(options) {
+
+    setExposed(options) {
         var headers = options.exposedHeaders;
 
         if (headers && headers.length) {
@@ -171,11 +140,7 @@ export default class extends think.middleware.base {
 
     }
 
-    /**
-     * 配置 Access-Control-Max-Age
-     * @param options
-     * @returns {*}
-     */
+
     setMaxAge(options) {
         var maxAge = options.maxAge && options.maxAge.toString();
         if (maxAge && maxAge.length) {
@@ -189,11 +154,7 @@ export default class extends think.middleware.base {
 
     }
 
-    /**
-     * setHeader
-     * @param headers
-     * @param res
-     */
+
     applyHeaders(headers, res) {
 
 
@@ -216,13 +177,6 @@ export default class extends think.middleware.base {
     }
 
 
-
-
-
-    /**
-     * run
-     * @return {} []
-     */
     run() {
 
 
@@ -232,25 +186,17 @@ export default class extends think.middleware.base {
         var options =  Object.assign({},defaults,cofingCors);
 
 
-        //console.log(JSON.stringify(options));
-
-
         var headers = [
             this.setOrigin(options, req),
             this.setCredentials(options, req),
-            this.setExposedHeaders(options, req)
+            this.setExposed(options, req)
 
         ];
-
-
-        //console.log("header");
-        //console.log(JSON.stringify(headers));
-
 
         if (method === 'OPTIONS') {
 
             headers.push(this.setMethods(options, req));
-            headers.push(this.setAllowedHeaders(options, req));
+            headers.push(this.setAllowed(options, req));
             headers.push(this.setMaxAge(options, req));
 
             this.applyHeaders(headers, res);

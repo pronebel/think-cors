@@ -25,15 +25,46 @@ cors的默认参数
 cors的全量设置:
     
     {
-        origin:"*",
-        methods:["GET","POST"]   
-        credentials:true,
-        allowedHeaders:["x-token","x-uid"],
-        exposedHeaders:["xx","yy"],
-        maxAge:1000,
-        preflightContinue:true
+        origin:"*",  //Access-Control-Allow-Origin
+        methods:"GET,POST",   //Access-Control-Allow-Methods
+        credentials:true,//Access-Control-Allow-Credentials
+        allowedHeaders:"x-token,x-uid",//Access-Control-Allow-Headers
+        exposedHeaders:"xx,yy",//Access-Control-Expose-Headers
+        maxAge:1000,//Access-Control-Max-Age//用于设置options请求的缓存
+        preflightContinue:true  //用于options请求
     }
+ 
+
+
+  origin  
+    1- 不设置,取默认值为 "*" 
+    2- 为特定的url
+    3- 为数组
     
+methods
+
+    1- 不设置,取默认值
+    2- 字符串,如: method:"GET,POST"
+
+credentials
+    
+    1- 不设置,取默认值
+    2- 设置为 true/false
+
+
+allowedHeaders
+    1- 不设置,取request的access-control-request-headers值
+    2- 字符串,如:"x-token,x-uid"
+
+
+exposedHeaders
+    1- 不设置
+    2- 字符串,如:"x-token,x-uid"
+
+
+maxAge
+    1- 不设置
+    2- 设置为秒数   
     
 origin:
     
@@ -77,41 +108,6 @@ methods:
     这样重复的OPTIONS请求会从缓存中提取,提高请求性能.
     
     
-### cors的执行过程
-    
-congif中的cors的设置,主要以下几种:
-
-Access-Control-Allow-Origin
-
-    
-    1- 不设置,取默认值为 "*" 
-    2- 为特定的url
-    3- 为数组
-    
-Access-Control-Allow-Methods
-
-    1- 不设置,取默认值
-    2- 字符串,如: method:"GET,POST"
-
-Access-Control-Allow-Credentials
-    
-    1- 不设置,取默认值
-    2- 设置为 true/false
-
-Access-Control-Allow-Headers
-
-    1- 不设置,取request的access-control-request-headers值
-    2- 字符串,如:"x-token,x-uid"
-
-Access-Control-Expose-Headers
-
-    1- 不设置
-    2- 字符串,如:"x-token,x-uid"
-
-Access-Control-Max-Age
-
-    1- 不设置
-    2- 设置为秒数
 
 
 
