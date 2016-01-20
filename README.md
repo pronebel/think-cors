@@ -1,15 +1,19 @@
 ### think-cors
 
-    参考express-cors插件中提取出来的thinkjs的cors插件,
-    并对其部分逻辑进行了规整优化处理,并补充了整体配置说明的说明,以前只能看代码
+    参考express-cors编写的thinkjs的cors插件
     
+    
+    在阅读express-cors的代码逻辑过程中,感觉给的设置的自由度太大,反而显得累赘,
+    比如methods的设置同时支持"GET,POST",和数组的设置["GET","POST"],
+    不如只支持string好了,功能是要考虑周到的,但输出给用户的方式需要简单唯一的,支持的多了反而凌乱了.
+    所以去掉了数组的方式
     
     
     
 ### cors插件解析及对cors相关理解的说明
 
 
-可以默认不设置(会取值为默认值),或 设置为如下的全量设置
+可以默认不设置(取默认值),或 设置为如下的全量设置
 
 ----------
     
@@ -45,8 +49,8 @@ cors的全量设置:
     
     
 分为简单和复杂两种
-        
-简单:
+
+简单:单一值的设置
 
     - 不设置(取默认值)
     - 设置为具体字符:"*" 或 具体的url地址
@@ -54,9 +58,10 @@ cors的全量设置:
       true标示任何请求都允许,由于*的设置与credentials为true时的不能同时设置,如果设置为true会填充为请求头Request中的origin
       false 标示不允许任何
         
-复杂:
+复杂:采取匹配的方式的设置
     
     数据对象,元素为字符,正则,(function暂不加,后继有复杂设置不能满足的场景,再进行增加),比如:
+    
     origin:[
         "http://abc.com",
         new RegExp()
@@ -68,12 +73,12 @@ cors的全量设置:
         
         
     
-####methods
+####methods (用于options预检请求)
    
     1- 不设置,取默认值
     2- 字符串,如: method:"GET,POST"
     
-    用于options请求
+    
 
 ####credentials
     
@@ -81,7 +86,7 @@ cors的全量设置:
     2- 设置为 true/false
 
 
-####allowedHeaders
+####allowedHeaders  (用于options预检请求)
     1- 不设置,取request的access-control-request-headers值
     2- 字符串,如:"x-token,x-uid"
 
@@ -91,11 +96,10 @@ cors的全量设置:
     2- 字符串,如:"x-token,x-uid"
 
 
-####maxAge
+####maxAge  (用于options预检请求)
 
     1- 不设置
     2- 设置为秒数   
-     用于options请求
 
     
 ### 测试用例

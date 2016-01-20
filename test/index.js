@@ -15,6 +15,7 @@ var getHttp = function(options,method){
     req.headers = {
         'origin':"http://www.thinkjs.org",
         'host': 'www.thinkjs.org',
+        "access-control-request-headers":"accept,x-token,x-user-id",
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit',
     };
@@ -74,7 +75,7 @@ describe('cors', function(){
 
 
 
-    it('empty,default config', function(done){
+    it('config empty ', function(done){
         execMiddleware({_config: {}},"OPTIONS").then(function(data){
 
 
@@ -94,7 +95,7 @@ describe('cors', function(){
         })
     })
 
-    it('set origin=true', function(done){
+    it('origin=true', function(done){
 
         var data =  {
             cors:{
@@ -114,8 +115,31 @@ describe('cors', function(){
             }
         })
     })
+    it('origin=false', function(done){
 
-    it('set origin=string array', function(done){
+        var data =  {
+            cors:{
+                origin:false
+            }
+        }
+
+        execMiddleware2({_config:data},"GET").then(function(data){
+
+            var origin;
+            if(data["_headers"]){
+                origin = data["_headers"]['access-control-allow-origin'];
+            }
+
+            try {
+                assert.equal(origin,undefined);
+                done();
+            } catch (x) {
+                done(x);
+            }
+        })
+    })
+
+    it('origin=string array', function(done){
 
         var data =  {
             cors:{
@@ -141,7 +165,7 @@ describe('cors', function(){
         })
     })
 
-    it('set origin=regex array', function(done){
+    it('origin=regex array', function(done){
 
         var thinkjsReg = /^http\:\/\/\D{1,}.thinkjs.org/gi;
         var data =  {
@@ -168,6 +192,172 @@ describe('cors', function(){
         })
     })
 
+
+    it('method=string ', function(done){
+
+
+        var data =  {
+            cors:{
+                methods:'GET,POST'
+            }
+        }
+        execMiddleware({_config: data},"OPTIONS").then(function(data){
+
+
+            var methods = data["_headers"]['access-control-allow-methods'];
+            try {
+
+                assert.equal(methods,'GET,POST');
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
+    it('credentials=true', function(done){
+
+
+        var data =  {
+            cors:{
+                credentials:true
+            }
+        }
+        execMiddleware({_config: data},"OPTIONS").then(function(data){
+            try {
+
+                var methods = data["_headers"]['Access-Control-Allow-Credentials'.toLowerCase()];
+                assert.equal(methods,'true');
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
+
+    it('allowedHeaders default', function(done){
+
+
+        execMiddleware({_config: {}},"OPTIONS").then(function(data){
+            try {
+
+                var methods = data["_headers"]['Access-Control-Allow-Headers'.toLowerCase()];
+
+                assert.equal(methods,"accept,x-token,x-user-id");
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
+
+    it('allowedHeaders="x-orange,x-apple"', function(done){
+
+        var data =  {
+            cors:{
+                allowedHeaders:"x-orange,x-apple"
+            }
+        }
+        execMiddleware({_config: data},"OPTIONS").then(function(data){
+            try {
+
+                var methods = data["_headers"]['Access-Control-Allow-Headers'.toLowerCase()];
+
+                assert.equal(methods,"x-orange,x-apple");
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
+
+    it('exposedHeaders default', function(done){
+
+
+        execMiddleware({_config: {}},"OPTIONS").then(function(data){
+            try {
+
+                var methods ;
+                if(data["_headers"]){
+                    methods=data["_headers"]['Access-Control-Expose-Headers'.toLowerCase()];
+                }
+
+                assert.equal(methods,undefined);
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
+
+    it('exposedHeaders="x-orange,x-apple"', function(done){
+
+        var data =  {
+            cors:{
+                exposedHeaders:"x-orange,x-apple"
+            }
+        }
+        execMiddleware({_config: data},"OPTIONS").then(function(data){
+            try {
+
+                var methods = data["_headers"]['Access-Control-Expose-Headers'.toLowerCase()];
+
+                assert.equal(methods,"x-orange,x-apple");
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
+
+
+
+    it('maxAge default', function(done){
+
+
+        execMiddleware({_config: {}},"OPTIONS").then(function(data){
+            try {
+
+                var methods ;
+                if(data["_headers"]){
+                    methods=data["_headers"]['Access-Control-Max-Age'.toLowerCase()];
+                }
+
+                assert.equal(methods,undefined);
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
+    it('maxAge=100', function(done){
+
+        var data =  {
+            cors:{
+                maxAge:100
+            }
+        }
+        execMiddleware({_config: data},"OPTIONS").then(function(data){
+            try {
+
+                var methods ;
+                if(data["_headers"]){
+                    methods=data["_headers"]['Access-Control-Max-Age'.toLowerCase()];
+                }
+                assert.equal(methods,"100");
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
 
 
 })
