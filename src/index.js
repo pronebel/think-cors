@@ -199,7 +199,7 @@ export default class extends think.middleware.base {
         if (method === 'OPTIONS') {
 
 
-            this.setMaxAge(options, req)
+            headers.push(this.setMaxAge(options, req));
             this.applyHeaders(headers, res);
 
             if (options.preflightContinue ) {
