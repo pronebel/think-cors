@@ -189,16 +189,17 @@ export default class extends think.middleware.base {
         var headers = [
             this.setOrigin(options, req),
             this.setCredentials(options, req),
-            this.setExposed(options, req)
+            this.setExposed(options, req),
+            this.setMethods(options, req),
+            this.setAllowed(options, req),
+
 
         ];
 
         if (method === 'OPTIONS') {
 
-            headers.push(this.setMethods(options, req));
-            headers.push(this.setAllowed(options, req));
-            headers.push(this.setMaxAge(options, req));
 
+            this.setMaxAge(options, req)
             this.applyHeaders(headers, res);
 
             if (options.preflightContinue ) {

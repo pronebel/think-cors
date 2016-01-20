@@ -174,12 +174,13 @@ describe('cors', function(){
             }
         }
 
-        execMiddleware2({_config:data},"OPTIONS").then(function(data){
+        execMiddleware2({_config:data},"GET").then(function(data){
 
 
 
             try {
                 var origin ;
+                console.log(data);
                 if(data["_headers"]){
                     origin = data["_headers"]['access-control-allow-origin'];
                 }
