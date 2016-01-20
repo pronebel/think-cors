@@ -92,7 +92,6 @@ Access-Control-Allow-Methods
 
     1- 不设置,取默认值
     2- 字符串,如: method:"GET,POST"
-    3- 字符数组,如:method:["GET","POST"]
 
 Access-Control-Allow-Credentials
     
@@ -103,13 +102,11 @@ Access-Control-Allow-Headers
 
     1- 不设置,取request的access-control-request-headers值
     2- 字符串,如:"x-token,x-uid"
-    3- 字符数组,如:["x-token","x-uid"]
 
 Access-Control-Expose-Headers
 
     1- 不设置
     2- 字符串,如:"x-token,x-uid"
-    3- 字符串数组,如:["x-token","x-uid"]
 
 Access-Control-Max-Age
 

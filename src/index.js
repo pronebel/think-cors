@@ -52,7 +52,7 @@ export default class extends think.middleware.base {
      * @param req
      * @returns {Array}
      */
-    configureOrigin(options, req) {
+    setOrigin(options, req) {
 
         var requestOrigin = req.headers.origin,
             headers = [],
@@ -99,15 +99,18 @@ export default class extends think.middleware.base {
      * @param options
      * @returns {{key: string, value: (Array|string)}}
      */
-    configureMethods(options) {
+    setMethods(options) {
         var methods = options.methods;
-        if (methods.join) {
-            methods = options.methods.join(',');
+
+        if(methods){
+            return {
+                key: 'Access-Control-Allow-Methods',
+                value: methods
+            };
+        }else{
+            return null;
         }
-        return {
-            key: 'Access-Control-Allow-Methods',
-            value: methods
-        };
+
     }
 
     /**
@@ -115,14 +118,16 @@ export default class extends think.middleware.base {
      * @param options
      * @returns {*}
      */
-    configureCredentials(options) {
+    setCredentials(options) {
         if (options.credentials === true) {
             return {
                 key: 'Access-Control-Allow-Credentials',
                 value: 'true'
             };
+        }else{
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -131,20 +136,20 @@ export default class extends think.middleware.base {
      * @param req
      * @returns {*}
      */
-    configureAllowedHeaders(options, req) {
+    setAllowedHeaders(options, req) {
         var headers = options.allowedHeaders;
         if (!headers) {
             headers = req.headers['access-control-request-headers']; // .headers wasn't specified, so reflect the request headers
-        } else if (headers.join) {
-            headers = headers.join(','); // .headers is an array, so turn it into a string
         }
         if (headers && headers.length) {
             return {
                 key: 'Access-Control-Allow-Headers',
                 value: headers
             };
+        }else{
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -152,20 +157,18 @@ export default class extends think.middleware.base {
      * @param options
      * @returns {*}
      */
-    configureExposedHeaders(options) {
+    setExposedHeaders(options) {
         var headers = options.exposedHeaders;
-        if (!headers) {
-            return null;
-        } else if (headers.join) {
-            headers = headers.join(','); // .headers is an array, so turn it into a string
-        }
+
         if (headers && headers.length) {
             return {
                 key: 'Access-Control-Expose-Headers',
                 value: headers
             };
+        }else{
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -173,15 +176,17 @@ export default class extends think.middleware.base {
      * @param options
      * @returns {*}
      */
-    configureMaxAge(options) {
+    setMaxAge(options) {
         var maxAge = options.maxAge && options.maxAge.toString();
         if (maxAge && maxAge.length) {
             return {
                 key: 'Access-Control-Max-Age',
                 value: maxAge
             };
+        }else{
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -231,9 +236,9 @@ export default class extends think.middleware.base {
 
 
         var headers = [
-            this.configureOrigin(options, req),
-            this.configureCredentials(options, req),
-            this.configureExposedHeaders(options, req)
+            this.setOrigin(options, req),
+            this.setCredentials(options, req),
+            this.setExposedHeaders(options, req)
 
         ];
 
@@ -244,9 +249,9 @@ export default class extends think.middleware.base {
 
         if (method === 'OPTIONS') {
 
-            headers.push(this.configureMethods(options, req));
-            headers.push(this.configureAllowedHeaders(options, req));
-            headers.push(this.configureMaxAge(options, req));
+            headers.push(this.setMethods(options, req));
+            headers.push(this.setAllowedHeaders(options, req));
+            headers.push(this.setMaxAge(options, req));
 
             this.applyHeaders(headers, res);
 
