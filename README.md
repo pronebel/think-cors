@@ -61,10 +61,11 @@ cors的全量设置:
 复杂:采取匹配的方式的设置
     
     数据对象,元素为字符,正则,(function暂不加,后继有复杂设置不能满足的场景,再进行增加),比如:
-    
-    origin:[
+     
+    var thinkjsReg = /^http\:\/\/\D{1,}.thinkjs.org/gi;
+    var origin:[
         "http://abc.com",
-        new RegExp()
+       thinkjsReg
     ]
         
         
@@ -118,7 +119,7 @@ cors的全量设置:
     
     在ajax进行跨域请求时就会自动先发出OPTIONS请求进行预捡,如果不对OPTIONS请求进行处理,
     在API不支持跨域时,会提示预检错误,不再发送后继的POST,GET的请求,在服务器支持CORS跨域时,
-    如果不对OPTIONS做返回的处理,服务器会对该请求返回一些内容,会出发请求回调,后继继续发送POST,GET请求.
+    如果不对OPTIONS做返回的处理,服务器会对该请求返回一些内容,会触发请求回调,后继继续发送POST,GET请求.
     
     express的cors插件通过preflightContinue对OPTIONS划分了两种处理方式(在支持cors跨域时):
     当参数为true:会继续提交给接口进行接口层面的返回, 当参数为false:直接返回HTTP Stauts 204.
