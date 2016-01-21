@@ -2,6 +2,10 @@
 
 var vary = require('vary');
 
+/**
+ * defaults config
+ * @type {{origin: string, methods: string, preflightContinue: boolean}}
+ */
 var defaults = {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -11,10 +15,21 @@ var defaults = {
 export default class extends think.middleware.base {
 
 
+    /**
+     * check is a string
+     * @param s
+     * @returns {boolean}
+     */
     isString(s) {
         return typeof s === 'string' || s instanceof String;
     }
 
+    /**
+     * check request.origin in allowedOrigin
+     * @param origin
+     * @param allowedOrigin
+     * @returns {boolean}
+     */
     isOriginAllowed(origin, allowedOrigin) {
         if (Array.isArray(allowedOrigin)) {
 
@@ -39,6 +54,12 @@ export default class extends think.middleware.base {
     }
 
 
+    /**
+     * set Origin
+     * @param options
+     * @param req
+     * @returns {Array}
+     */
     setOrigin(options, req) {
 
         var requestOrigin = req.headers.origin,
@@ -81,51 +102,77 @@ export default class extends think.middleware.base {
     }
 
 
+    /**
+     * set Methods
+     * @param options
+     * @returns {*}
+     */
     setMethods(options) {
         var methods = options.methods;
 
+
+        var retMethod = null;
+
+
         if(methods){
-            return {
+            retMethod= {
                 key: 'Access-Control-Allow-Methods',
                 value: methods
             };
-        }else{
-            return null;
         }
+
+        return retMethod;
 
     }
 
-
+    /**
+     * set Credentials
+     * @param options
+     * @returns {*}
+     */
     setCredentials(options) {
         if (options.credentials === true) {
             return {
                 key: 'Access-Control-Allow-Credentials',
                 value: 'true'
             };
-        }else{
-            return null;
         }
-
+        return null;
     }
 
 
+    /**
+     * set allow headers
+     * @param options
+     * @param req
+     * @returns {*}
+     */
     setAllowed(options, req) {
         var headers = options.allowedHeaders;
+
+
+        var retAllow = null;
+
         if (!headers) {
             headers = req.headers['access-control-request-headers'];
         }
         if (headers && headers.length) {
-            return {
+            retAllow = {
                 key: 'Access-Control-Allow-Headers',
                 value: headers
             };
-        }else{
-            return null;
         }
+
+        return retAllow;
 
     }
 
-
+    /**
+     * set expose headers
+     * @param options
+     * @param req
+     * @returns {*}
+     */
     setExposed(options) {
         var headers = options.exposedHeaders;
 
@@ -141,6 +188,11 @@ export default class extends think.middleware.base {
     }
 
 
+    /**
+     * set request cache ,when request is OPTIONS
+     * @param options
+     * @returns {*}
+     */
     setMaxAge(options) {
         var maxAge = options.maxAge && options.maxAge.toString();
         if (maxAge && maxAge.length) {
@@ -155,6 +207,11 @@ export default class extends think.middleware.base {
     }
 
 
+    /**
+     * apply  the header change
+     * @param headers
+     * @param res
+     */
     applyHeaders(headers, res) {
 
 
@@ -177,6 +234,9 @@ export default class extends think.middleware.base {
     }
 
 
+    /**
+     * middleware execute
+     */
     run() {
 
 
@@ -191,7 +251,7 @@ export default class extends think.middleware.base {
             this.setCredentials(options, req),
             this.setExposed(options, req),
             this.setMethods(options, req),
-            this.setAllowed(options, req),
+            this.setAllowed(options, req)
 
 
         ];
@@ -202,13 +262,12 @@ export default class extends think.middleware.base {
             headers.push(this.setMaxAge(options, req));
             this.applyHeaders(headers, res);
 
-            if (options.preflightContinue ) {
-                return;
-            } else {
+            if (!options.preflightContinue ) {
                 res.statusCode = 204;
                 res.end();
-                return;
             }
+            return;
+
         } else {
             this.applyHeaders(headers, res);
             return;

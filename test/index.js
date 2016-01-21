@@ -115,6 +115,7 @@ describe('cors', function(){
             }
         })
     })
+
     it('origin=false', function(done){
 
         var data =  {
@@ -165,6 +166,32 @@ describe('cors', function(){
         })
     })
 
+    it('origin not in  array', function(done){
+
+        var data =  {
+            cors:{
+                origin:["http://www.baidu.com",'http://www.thinkjs2.org']
+            }
+        }
+
+        execMiddleware2({_config:data},"OPTIONS").then(function(data){
+
+
+
+            try {
+                var origin ;
+                if(data["_headers"]){
+                    origin = data["_headers"]['access-control-allow-origin'];
+                }
+
+                assert.equal(origin,undefined);
+                done();
+            } catch (x) {
+                done(x);
+            }
+        })
+    })
+
     it('origin=regex array', function(done){
 
         var thinkjsReg = /^http\:\/\/(.+\.)?thinkjs.org$/;//   /^http\:\/\/\D{1,}.thinkjs.org/gi;
@@ -180,7 +207,7 @@ describe('cors', function(){
 
             try {
                 var origin ;
-                console.log(data);
+
                 if(data["_headers"]){
                     origin = data["_headers"]['access-control-allow-origin'];
                 }
@@ -194,6 +221,28 @@ describe('cors', function(){
     })
 
 
+    it('method=default ', function(done){
+
+
+        var data =  {
+            cors:{
+                methods:'GET,POST'
+            }
+        }
+        execMiddleware({_config: data},"OPTIONS").then(function(data){
+
+
+            var methods = data["_headers"]['access-control-allow-methods'];
+            try {
+
+                assert.equal(methods,'GET,POST');
+                done();
+            } catch (x) {
+                done(x);
+            }
+
+        })
+    })
     it('method=string ', function(done){
 
 
