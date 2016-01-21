@@ -1,3 +1,10 @@
+
+### install
+
+    npm install think-cors
+
+
+
 ### think-cors
 
     参考express-cors编写的thinkjs的cors插件
