@@ -1,17 +1,16 @@
 
 ### 使用 （主要请熟悉thinkjs中的middleware部分）
 
-- 安装：npm install think-cors
-- src/commom/bootstrap/middleware.js中添加：
+安装：npm install think-cors
+src/commom/bootstrap/middleware.js中添加：
 
     var cors = require("think-cors");
     think.middleware("cors", cors);
     
-- src/commom/config/config.js中添加cors配置：
+src/commom/config/config.js中添加cors配置：
 
     export default {
         cors:{
-        
             origin:[/^http\:\/\/(.+\.)?domain.com$/],
             methods: 'HEAD,DELETE',
             preflightContinue: false,
@@ -19,7 +18,7 @@
         }
     };
     
-- src/commom/config/hook.js中配置：
+src/commom/config/hook.js中配置：
 
     export default {
         request_begin: ['cors']
