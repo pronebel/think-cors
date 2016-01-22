@@ -1,18 +1,18 @@
 
-### Usage
+# Usage
 
 First, please reader the doc about the [Middleware](https://thinkjs.org/zh-cn/doc/2.1/middleware.html) in thinkjs.org
 
-Then,config  as follows:
+Then, config  as follows:
 
-npm install think-cors
+###### npm install think-cors
 
-src/commom/bootstrap/middleware.js：
+###### src/commom/bootstrap/middleware.js：
 
     var cors = require("think-cors");
     think.middleware("cors", cors);
     
-src/commom/config/config.js：
+###### src/commom/config/config.js：
 
     export default {
         cors:{
@@ -22,7 +22,7 @@ src/commom/config/config.js：
         }
     };
     
-src/commom/config/hook.js：
+###### src/commom/config/hook.js：
 
     export default {
         request_begin: ['cors']
@@ -31,11 +31,11 @@ src/commom/config/hook.js：
 
     
     
-### docs
+# docs
 
 
     
-the default config:
+### the default config:
     
     {
         origin: '*',
@@ -44,7 +44,7 @@ the default config:
     };
     
     
-the detail props of config:
+### the detail props of config:
     
     {
         origin:"*",                         //Access-Control-Allow-Origin
@@ -58,7 +58,7 @@ the detail props of config:
  
 ###  Config Item 
 
-####origin  
+#### origin  
 
 simple config:
 
@@ -85,7 +85,7 @@ simple config:
     }
         
  
-complex config:
+###### complex config:
 
     {
         origin:[
@@ -112,7 +112,7 @@ complex config:
     
     
 
-####credentials
+#### credentials
     
     1- default as false
     2- set as:
@@ -122,14 +122,14 @@ complex config:
         
 
 
-####allowedHeaders  
+#### allowedHeaders  
     1- default set as  the value of "access-control-request-headers"
     2- set as a string :
         {
             allowedHeaders:"x-token,x-uid"
         }
 
-####exposedHeaders
+#### exposedHeaders
 
     1- default as null
     2- set as a string :
@@ -138,7 +138,7 @@ complex config:
        }
 
 
-####maxAge  (set for the OPTIONS)
+#### maxAge  (set for the OPTIONS)
 
     1- default as null
     2- set the OPTIONS request senconds:
