@@ -1,5 +1,5 @@
 
-# Usage
+# Usage   [中文文档](README.CN.md)
 
 First, please reader the doc about the [Middleware](https://thinkjs.org/zh-cn/doc/2.1/middleware.html) in thinkjs.org
 
