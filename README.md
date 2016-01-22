@@ -138,10 +138,10 @@ simple config:
        }
 
 
-#### maxAge  (set for the OPTIONS)
+#### maxAge  
 
     1- default as null
-    2- set the OPTIONS request senconds:
+    2- set the OPTIONS request cache senconds:
     
         {
             maxAge: 1000//  1000 seconds
