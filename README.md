@@ -35,7 +35,7 @@ Then, config  as follows:
 
 
     
-### the default config:
+#### the default config:
     
     {
         origin: '*',
@@ -44,7 +44,7 @@ Then, config  as follows:
     };
     
     
-### the detail props of config:
+#### the detail props of config:
     
     {
         origin:"*",                         //Access-Control-Allow-Origin
@@ -56,7 +56,7 @@ Then, config  as follows:
         preflightContinue:true              
     }
  
-###  Config Item 
+##  Config Item 
 
 #### origin  
 
@@ -123,7 +123,7 @@ simple config:
 
 
 #### allowedHeaders  
-    1- default set as  the value of "access-control-request-headers"
+    1- default  as  the value of "access-control-request-headers"
     2- set as a string :
         {
             allowedHeaders:"x-token,x-uid"
@@ -141,7 +141,7 @@ simple config:
 #### maxAge  
 
     1- default as null
-    2- set the OPTIONS request cache senconds:
+    2- set senconds  of the  OPTIONS request cache:
     
         {
             maxAge: 1000//  1000 seconds
