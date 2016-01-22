@@ -1,5 +1,5 @@
 
-### 使用 （主要请熟悉thinkjs中的middleware部分）
+### 使用 （请熟悉thinkjs文档中middleware部分）
 
 安装：npm install think-cors
 src/commom/bootstrap/middleware.js中添加：
@@ -30,8 +30,8 @@ src/commom/config/hook.js中配置：
     参考express-cors编写的thinkjs的cors插件
     
     
-    在阅读express-cors的代码逻辑过程中,感觉给的设置的自由度太大,反而显得累赘,
-    比如methods的设置同时支持"GET,POST",和数组的设置["GET","POST"],
+    在阅读express-cors的代码逻辑过程中,感觉给的设置的自由度太大,反而显得累赘,、比如methods的
+    设置同时支持"GET,POST",和数组的设置["GET","POST"],
     不如只支持string好了,功能是要考虑周到的,但输出给用户的方式需要简单唯一的,支持的多了反而凌乱了.
     所以去掉了数组的方式
     
