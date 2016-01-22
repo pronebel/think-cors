@@ -7,12 +7,12 @@ Then, config  as follows:
 
 ###### npm install think-cors
 
-###### src/commom/bootstrap/middleware.js：
+###### src/common/bootstrap/middleware.js：
 
     var cors = require("think-cors");
     think.middleware("cors", cors);
     
-###### src/commom/config/config.js：
+###### src/common/config/config.js：
 
     export default {
         cors:{
@@ -22,7 +22,7 @@ Then, config  as follows:
         }
     };
     
-###### src/commom/config/hook.js：
+###### src/common/config/hook.js：
 
     export default {
         request_begin: ['cors']
