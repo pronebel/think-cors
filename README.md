@@ -14,10 +14,9 @@ src/commom/config/config.js中添加cors配置：
 
     export default {
         cors:{
-            origin:[/^http\:\/\/(.+\.)?domain.com$/],
-            methods: 'HEAD,DELETE',
-            preflightContinue: false,
-            maxAge:10000
+            origin: '*',
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            preflightContinue: false 
         }
     };
     
