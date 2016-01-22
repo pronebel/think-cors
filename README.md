@@ -1,7 +1,7 @@
 
-# Usage   [中文文档](docs/README.CN.md)
+# Usage   [中文文档](https://github.com/pronebel/think-cors/blob/master/docs/README.CN.md)
 
-First, please reader the doc about the [Middleware](https://thinkjs.org/en/doc/2.1/middleware.html) in thinkjs.org
+First, please read the doc about the [Middleware](https://thinkjs.org/en/doc/2.1/middleware.html) in thinkjs.org
 
 Then, config  as follows:
 
@@ -53,7 +53,7 @@ Then, config  as follows:
         allowedHeaders:"x-token,x-uid",     //Access-Control-Allow-Headers
         exposedHeaders:"xx,yy",             //Access-Control-Expose-Headers
         maxAge:1000,                        //Access-Control-Max-Age  for the OPTIONS request
-        preflightContinue:true              
+        preflightContinue:true              // for the OPTIONS request 
     }
  
 ##  Config Item 
