@@ -1,7 +1,10 @@
 
-### 使用 （请熟悉thinkjs文档中middleware部分）
+### 使用 
+
+请熟悉thinkjs文档中middleware部分
 
 安装：npm install think-cors
+
 src/commom/bootstrap/middleware.js中添加：
 
     var cors = require("think-cors");
