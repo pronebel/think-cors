@@ -1,3 +1,11 @@
+### changelog 
+
+##### version 1.1.0
+    
+    - 增加了think.http.isAjax的判断，如果是ajax才需要走cors的判断
+    - 增加了exclude 数组配置，exclude的配置项为 正则，或者http.url的值，如果请求在exclude中，则不走cors设置
+
+
 
 ### 使用 
 
@@ -96,7 +104,23 @@ cors的全量设置:
       /^http\:\/\/(.+\.)?thinkjs.org$/
     ]
         
-        
+ #### exclude 配置:
+ 
+ url是指 think.http.url 获取的 url片段值，如:
+ http://yours.domain.com/xxxx/yyyy   =>     /xxxx/yyyy
+ 
+ 
+ 
+     {
+         exclude:[
+             
+             "/xxxx/yyyy",   //  如果当前配置项索引 当前的请求url>-1，则跳过  
+             
+             /^xxxxxxxx$/   , // 如果当前的请求url符合正则，则跳过
+         
+         ]
+     
+     }       
         
         
         

@@ -54,6 +54,7 @@ Then, config  as follows:
         exposedHeaders:"xx,yy",             //Access-Control-Expose-Headers
         maxAge:1000,                        //Access-Control-Max-Age  for the OPTIONS request
         preflightContinue:true              // for the OPTIONS request 
+        exclude:[]
     }
  
 ##  Config Item 
@@ -98,7 +99,24 @@ simple config:
     
     }
     
+#### exclude config:
 
+the config value like this.
+http://yours.domain.com/xxxx/yyyy   =>     /xxxx/yyyy
+
+
+
+    {
+        exclude:[
+            
+            "/xxxx/yyyy",
+            
+            /^xxxxxxxx$/   , // the value regex
+        
+        ]
+    
+    }
+    
         
     
 ####methods 
