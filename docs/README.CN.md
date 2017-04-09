@@ -72,7 +72,9 @@ cors的全量设置:
         allowedHeaders:"x-token,x-uid",     //Access-Control-Allow-Headers
         exposedHeaders:"xx,yy",             //Access-Control-Expose-Headers
         maxAge:1000,                        //Access-Control-Max-Age
-        preflightContinue:true  
+        preflightContinue:true ,
+        exclude:[]
+         
     }
  
 
