@@ -9,10 +9,34 @@ var vary = require('vary');
 var defaults = {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false
+    preflightContinue: false,
+    exclude: null
 };
 
 export default class extends think.middleware.base {
+
+
+    /**
+     * check the request is need cors (like: the websocket request is not need CORS)
+     * @param url: 当前请求的url
+     * @param urlList：规则列表，可以是 具体url，正则 的array，默认行为定义为
+     * @returns {boolean}
+     */
+    checkHttp(urlList, url) {
+        if (Array.isArray(urlList)) {
+            for (let i = 0; i < urlList.length; i++) {
+                let urlItem = urlList[i];
+                if (this.isString(urlItem) && (url.indexOf(urlItem) > -1)) {
+                    return true;
+                } else if (urlItem instanceof RegExp && (urlItem.test(url))) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false
+        }
+    }
 
 
     /**
@@ -34,13 +58,13 @@ export default class extends think.middleware.base {
         if (Array.isArray(allowedOrigin)) {
 
 
-            for(let i=0;i<allowedOrigin.length;i++){
+            for (let i = 0; i < allowedOrigin.length; i++) {
 
                 let originItem = allowedOrigin[i];
 
-                if (this.isString(originItem)&&(origin === originItem)) {
+                if (this.isString(originItem) && (origin === originItem)) {
                     return true;
-                } else if (originItem instanceof RegExp  &&(originItem.test(origin))) {
+                } else if (originItem instanceof RegExp && (originItem.test(origin))) {
                     return true;
                 }
             }
@@ -48,7 +72,7 @@ export default class extends think.middleware.base {
             return false;
 
 
-        }else {
+        } else {
             return !!allowedOrigin;
         }
     }
@@ -114,8 +138,8 @@ export default class extends think.middleware.base {
         var retMethod = null;
 
 
-        if(methods){
-            retMethod= {
+        if (methods) {
+            retMethod = {
                 key: 'Access-Control-Allow-Methods',
                 value: methods
             };
@@ -181,7 +205,7 @@ export default class extends think.middleware.base {
                 key: 'Access-Control-Expose-Headers',
                 value: headers
             };
-        }else{
+        } else {
             return null;
         }
 
@@ -200,7 +224,7 @@ export default class extends think.middleware.base {
                 key: 'Access-Control-Max-Age',
                 value: maxAge
             };
-        }else{
+        } else {
             return null;
         }
 
@@ -240,11 +264,21 @@ export default class extends think.middleware.base {
     run() {
 
 
-        let [req,res,cofingCors] = [this.http.req, this.http.res,(this.config('cors') || {})];
-        let  method = req.method && req.method.toUpperCase && req.method.toUpperCase();
+        let [req, res, cofingCors] = [this.http.req, this.http.res, (this.config('cors') || {})];
+        let method = req.method && req.method.toUpperCase && req.method.toUpperCase();
 
-        var options =  Object.assign({},defaults,cofingCors);
+        var options = Object.assign({}, defaults, cofingCors);
 
+        let excludeUrl = options.exclude;
+
+        if(!this.http.isAjax()){
+            return;
+        }
+
+
+        if (this.checkHttp(excludeUrl, this.http.url)) {
+            return;
+        }
 
         var headers = [
             this.setOrigin(options, req),
@@ -252,8 +286,6 @@ export default class extends think.middleware.base {
             this.setExposed(options, req),
             this.setMethods(options, req),
             this.setAllowed(options, req)
-
-
         ];
 
         if (method === 'OPTIONS') {
@@ -262,7 +294,7 @@ export default class extends think.middleware.base {
             headers.push(this.setMaxAge(options, req));
             this.applyHeaders(headers, res);
 
-            if (!options.preflightContinue ) {
+            if (!options.preflightContinue) {
                 res.statusCode = 204;
                 res.end();
             }
@@ -272,5 +304,6 @@ export default class extends think.middleware.base {
             this.applyHeaders(headers, res);
             return;
         }
+
     }
 }
