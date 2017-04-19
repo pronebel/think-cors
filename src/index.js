@@ -271,7 +271,7 @@ export default class extends think.middleware.base {
 
         let excludeUrl = options.exclude;
 
-        if(!this.http.isAjax()){
+        if(this.http.isAjax()){
             return;
         }
 
