@@ -1,5 +1,6 @@
 ### changelog 
-
+##### version 1.1.2
+    - bugfix:think.http.isAjax为是判断同域的请求,1.0版本中误以为页面放出的ajax请求就会为真,实际跨域是为false导致跨域请求部进行cors处理了
 ##### version 1.1.0
     
     - 增加了think.http.isAjax的判断，如果是ajax才需要走cors的判断
