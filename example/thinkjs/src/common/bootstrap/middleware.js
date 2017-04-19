@@ -11,3 +11,6 @@
  * })
  * 
  */
+var cors = require("../../../../../lib/index");
+
+think.middleware("cors", cors);
