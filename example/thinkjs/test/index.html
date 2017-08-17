@@ -65,7 +65,7 @@
                 contentType: false,
                 processData: false,
                 success: function (data) {
-                    $('#serverResponse').html(data);
+                    $('#serverResponse').html(JSON.stringify(data));
                 },
                 error: function (data) {
                     $('#serverResponse').html(data.status + " : " + data.statusText + " : " + data.responseText);
