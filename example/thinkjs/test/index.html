@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New ThinkJS Application</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" >
+
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body style="padding:3em;">
+
+<div class="container">
+    <div class="row" style="margin-bottom: 40px;">
+        <div class="col">
+           <h2>测试:常规cors请求</h2>
+            <button type="button" id="J_send" class="btn btn-info">发送cors请求</button>
+            <div id="J_result"></div>
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2>测试2:跨域上传文件</h2>
+            <form id= "postForm" name="fileInfo"  method="post" enctype ="multipart/form-data">
+                <input name="pngfile" type="file"><br>
+                <button type="button" id="J_send2" class="btn btn-info">发送cors请求</button>
+            </form>
+            <div id="serverResponse"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function(){
+
+        $("#J_send").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8360/home/index/cors",
+                data: "name=John&location=Boston",
+                success: function(data){
+                    console.log(data);
+                    $("#J_result").html("请求成功")
+                },
+                error(data){
+                    $("#J_result").html("请求失败")
+                }
+            });
+
+        })
+        $("#J_send2").click(function () {
+
+            var oData = new FormData($('#postForm')[0]);
+            oData.append( "CustomField", "This is some extra data" );
+            console.log(oData)
+            $.ajax({
+                url: "http://localhost:8360/home/index/corsfile",
+                type: "POST",
+                data: oData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    $('#serverResponse').html(data);
+                },
+                error: function (data) {
+                    $('#serverResponse').html(data.status + " : " + data.statusText + " : " + data.responseText);
+                }
+
+            })
+        })
+
+    })
+
+</script>
+</body>
+</html>
