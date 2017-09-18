@@ -297,6 +297,7 @@ export default class extends think.middleware.base {
             if (!options.preflightContinue) {
                 res.statusCode = 204;
                 res.end();
+                return res.prevent();
             }
             return;
 
